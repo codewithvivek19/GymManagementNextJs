@@ -1,100 +1,182 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Calendar, Mail, Phone } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-
-const trainers = [
-  {
-    id: 1,
-    name: "John Smith",
-    gender: "male",
-    image: "/placeholder.svg?height=400&width=400",
-    specialization: "Strength & Conditioning",
-    experience: "10+ years",
-    bio: "John is a certified strength and conditioning specialist with over a decade of experience helping clients achieve their fitness goals. He specializes in powerlifting and functional training.",
-    certifications: ["CSCS", "NASM-CPT", "CrossFit L3"],
-  },
-  {
-    id: 2,
-    name: "Michael Johnson",
-    gender: "male",
-    image: "/placeholder.svg?height=400&width=400",
-    specialization: "Sports Performance",
-    experience: "8 years",
-    bio: "Michael is a former college athlete who specializes in sports-specific training. He works with athletes of all levels to improve performance and prevent injuries.",
-    certifications: ["NSCA-CPT", "PES", "CES"],
-  },
-  {
-    id: 3,
-    name: "David Williams",
-    gender: "male",
-    image: "/placeholder.svg?height=400&width=400",
-    specialization: "Weight Loss & Nutrition",
-    experience: "6 years",
-    bio: "David combines exercise science with nutrition coaching to help clients transform their bodies. His holistic approach focuses on sustainable lifestyle changes.",
-    certifications: ["ACE-CPT", "Precision Nutrition", "TRX"],
-  },
-  {
-    id: 4,
-    name: "Sarah Johnson",
-    gender: "female",
-    image: "/placeholder.svg?height=400&width=400",
-    specialization: "Yoga & Mobility",
-    experience: "12 years",
-    bio: "Sarah is a 500-hour certified yoga instructor with additional training in mobility and corrective exercise. She helps clients improve flexibility, reduce pain, and enhance recovery.",
-    certifications: ["RYT-500", "FRC", "NASM-CES"],
-  },
-]
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
+import { getTrainers } from "@/lib/supabase"
 
 export default function TrainerSection() {
+  const [trainers, setTrainers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchTrainers = async () => {
+      try {
+        setLoading(true)
+        
+        // Use the new API endpoint
+        const response = await fetch('/api/data?type=trainers');
+        const result = await response.json();
+        
+        if (result.data) {
+          setTrainers(result.data);
+        } else {
+          console.error("API returned error:", result.error);
+          
+          // Fallback to Supabase directly
+          console.log("Falling back to direct Supabase call");
+          const data = await getTrainers();
+          
+          if (data && data.length > 0) {
+            setTrainers(data);
+          } else {
+            setError("No trainers found. Please try again later.");
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching trainers:", err)
+        setError("Failed to load trainers. Please try again later.")
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchTrainers()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold mb-2">Expert Trainers</h3>
+          <p className="text-muted-foreground">Loading trainers...</p>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="border rounded-lg p-4 animate-pulse">
+              <div className="relative h-64 bg-muted rounded-lg mb-4"></div>
+              <div className="h-6 bg-muted rounded mb-2 w-3/4"></div>
+              <div className="h-4 bg-muted rounded mb-4 w-1/2"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-muted rounded w-full"></div>
+                <div className="h-4 bg-muted rounded w-full"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold mb-2">Expert Trainers</h3>
+          <p className="text-red-500">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (trainers.length === 0) {
+    return (
+      <div className="space-y-8">
+        <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold mb-2">Expert Trainers</h3>
+          <p className="text-muted-foreground">No trainers are currently available. Please check back later.</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold mb-2">Meet Our Expert Trainers</h3>
+        <h3 className="text-2xl font-bold mb-2">Expert Trainers</h3>
         <p className="text-muted-foreground">
-          Our certified trainers are here to guide you on your fitness journey with personalized programs and expert
-          advice.
+          Meet our certified fitness professionals who will guide you in your fitness journey.
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {trainers.map((trainer) => (
-          <Card key={trainer.id} className="overflow-hidden">
-            <div className="relative h-64">
-              <Image src={trainer.image || "/placeholder.svg"} alt={trainer.name} fill className="object-cover" />
+          <div key={trainer.id} className="border rounded-lg overflow-hidden">
+            <div className="relative h-64 w-full">
+              <Image
+                src={trainer.image_url || "https://via.placeholder.com/400x400?text=Trainer"}
+                alt={trainer.name}
+                fill
+                className="object-cover"
+              />
             </div>
-            <CardHeader className="pb-2">
-              <CardTitle>{trainer.name}</CardTitle>
-              <CardDescription>{trainer.specialization}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2 pb-2">
-              <p className="text-sm">
-                <span className="font-medium">Experience:</span> {trainer.experience}
+            <div className="p-4">
+              <h4 className="font-bold text-xl mb-1">{trainer.name}</h4>
+              <Badge variant="outline" className="mb-3">
+                {trainer.specialization}
+              </Badge>
+              <p className="text-sm text-muted-foreground mb-3">
+                {trainer.experience} years experience
               </p>
-              <div className="flex flex-wrap gap-2">
-                {trainer.certifications.map((cert, index) => (
-                  <Badge key={index} variant="secondary">
-                    {cert}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">
-                View Profile
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+              <p className="text-sm mb-4 line-clamp-3">
+                {trainer.bio}
+              </p>
 
-      <div className="bg-muted p-6 rounded-lg mt-8">
-        <h3 className="text-xl font-bold mb-4">Book a Session with a Trainer</h3>
-        <p className="text-muted-foreground mb-4">
-          Get personalized guidance from our expert trainers to accelerate your fitness journey. Whether you're just
-          starting out or looking to break through a plateau, our trainers can help.
-        </p>
-        <Button>Schedule a Consultation</Button>
+              <div className="flex justify-between mt-4">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      View Profile
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>{trainer.name}</DialogTitle>
+                      <DialogDescription>{trainer.specialization}</DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="relative h-64 w-full rounded-lg overflow-hidden">
+                        <Image
+                          src={trainer.image_url || "https://via.placeholder.com/400x400?text=Trainer"}
+                          alt={trainer.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-2">About Me</h4>
+                        <p className="text-sm text-muted-foreground">{trainer.bio}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-2">Experience</h4>
+                        <p className="text-sm text-muted-foreground">{trainer.experience} years of professional experience</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-2">Contact</h4>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Mail className="h-4 w-4 mr-2" />
+                          {trainer.email}
+                        </div>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button>Book a Session</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+
+                <Button size="sm">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Book Session
+                </Button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

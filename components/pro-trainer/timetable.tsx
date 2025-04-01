@@ -1,73 +1,11 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { getSchedules, getTrainers } from "@/lib/supabase"
 
 const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-
-const classes = [
-  {
-    day: "Monday",
-    schedule: [
-      { time: "06:00 - 07:00", name: "Morning HIIT", trainer: "John Smith", level: "All Levels" },
-      { time: "09:00 - 10:00", name: "Yoga Flow", trainer: "Sarah Johnson", level: "Beginner" },
-      { time: "12:00 - 13:00", name: "Strength Circuit", trainer: "Michael Johnson", level: "Intermediate" },
-      { time: "17:30 - 18:30", name: "Spin Class", trainer: "David Williams", level: "All Levels" },
-      { time: "19:00 - 20:00", name: "Boxing Fundamentals", trainer: "John Smith", level: "Beginner" },
-    ],
-  },
-  {
-    day: "Tuesday",
-    schedule: [
-      { time: "06:00 - 07:00", name: "Functional Training", trainer: "Michael Johnson", level: "Intermediate" },
-      { time: "09:00 - 10:00", name: "Pilates", trainer: "Sarah Johnson", level: "All Levels" },
-      { time: "12:00 - 13:00", name: "Express Core", trainer: "David Williams", level: "All Levels" },
-      { time: "17:30 - 18:30", name: "Zumba", trainer: "Guest Instructor", level: "All Levels" },
-      { time: "19:00 - 20:00", name: "Power Yoga", trainer: "Sarah Johnson", level: "Intermediate" },
-    ],
-  },
-  {
-    day: "Wednesday",
-    schedule: [
-      { time: "06:00 - 07:00", name: "Morning HIIT", trainer: "John Smith", level: "All Levels" },
-      { time: "09:00 - 10:00", name: "Senior Fitness", trainer: "Sarah Johnson", level: "Beginner" },
-      { time: "12:00 - 13:00", name: "Strength Circuit", trainer: "Michael Johnson", level: "Intermediate" },
-      { time: "17:30 - 18:30", name: "Spin Class", trainer: "David Williams", level: "All Levels" },
-      { time: "19:00 - 20:00", name: "Kickboxing", trainer: "John Smith", level: "Intermediate" },
-    ],
-  },
-  {
-    day: "Thursday",
-    schedule: [
-      { time: "06:00 - 07:00", name: "Functional Training", trainer: "Michael Johnson", level: "Intermediate" },
-      { time: "09:00 - 10:00", name: "Yoga Flow", trainer: "Sarah Johnson", level: "Beginner" },
-      { time: "12:00 - 13:00", name: "Express Core", trainer: "David Williams", level: "All Levels" },
-      { time: "17:30 - 18:30", name: "HIIT", trainer: "John Smith", level: "Advanced" },
-      { time: "19:00 - 20:00", name: "Meditation & Stretch", trainer: "Sarah Johnson", level: "All Levels" },
-    ],
-  },
-  {
-    day: "Friday",
-    schedule: [
-      { time: "06:00 - 07:00", name: "Morning HIIT", trainer: "John Smith", level: "All Levels" },
-      { time: "09:00 - 10:00", name: "Pilates", trainer: "Sarah Johnson", level: "All Levels" },
-      { time: "12:00 - 13:00", name: "Strength Circuit", trainer: "Michael Johnson", level: "Intermediate" },
-      { time: "17:30 - 18:30", name: "Spin Class", trainer: "David Williams", level: "All Levels" },
-      { time: "19:00 - 20:00", name: "Social Dance", trainer: "Guest Instructor", level: "Beginner" },
-    ],
-  },
-  {
-    day: "Saturday",
-    schedule: [
-      { time: "08:00 - 09:00", name: "Weekend Warrior", trainer: "John Smith", level: "Advanced" },
-      { time: "10:00 - 11:00", name: "Yoga Flow", trainer: "Sarah Johnson", level: "All Levels" },
-      { time: "12:00 - 13:00", name: "Family Fitness", trainer: "Michael Johnson", level: "All Levels" },
-      { time: "14:00 - 15:00", name: "Boxing", trainer: "John Smith", level: "Intermediate" },
-    ],
-  },
-  {
-    day: "Sunday",
-    schedule: [],
-  },
-]
 
 const gymHours = {
   Monday: "05:00 - 23:00",
@@ -80,6 +18,164 @@ const gymHours = {
 }
 
 export default function Timetable() {
+  const [classes, setClasses] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [trainers, setTrainers] = useState({})
+
+  useEffect(() => {
+    const fetchSchedulesAndTrainers = async () => {
+      try {
+        setLoading(true)
+        
+        // Fetch trainers from API
+        const trainersResponse = await fetch('/api/data?type=trainers');
+        const trainersResult = await trainersResponse.json();
+        
+        let trainersData = [];
+        if (trainersResult.data) {
+          trainersData = trainersResult.data;
+        } else {
+          console.error("API returned error for trainers:", trainersResult.error);
+          
+          // Fallback to Supabase
+          trainersData = await getTrainers();
+        }
+        
+        const trainersMap = {};
+        if (trainersData && trainersData.length > 0) {
+          trainersData.forEach(trainer => {
+            trainersMap[trainer.id] = trainer.name;
+          });
+          setTrainers(trainersMap);
+        }
+        
+        // Fetch schedules from API
+        const schedulesResponse = await fetch('/api/data?type=schedules');
+        const schedulesResult = await schedulesResponse.json();
+        
+        let schedulesData = [];
+        if (schedulesResult.data) {
+          schedulesData = schedulesResult.data;
+        } else {
+          console.error("API returned error for schedules:", schedulesResult.error);
+          
+          // Fallback to Supabase
+          schedulesData = await getSchedules();
+        }
+        
+        if (schedulesData && schedulesData.length > 0) {
+          // Group schedules by day
+          const groupedSchedules = weekdays.map(day => {
+            const daySchedules = schedulesData.filter(schedule => 
+              schedule.day.toLowerCase() === day.toLowerCase()
+            );
+            
+            // Map to the format expected by the component
+            const formattedSchedules = daySchedules.map(schedule => {
+              // If trainer is directly available from the API response
+              let trainerName = '';
+              if (schedule.trainer) {
+                trainerName = schedule.trainer.name;
+              } else if (schedule.trainer_id && trainersMap[schedule.trainer_id]) {
+                trainerName = trainersMap[schedule.trainer_id];
+              } else {
+                trainerName = "Unknown Instructor";
+              }
+              
+              return {
+                time: `${schedule.time} - ${calculateEndTime(schedule.time, schedule.duration)}`,
+                name: schedule.name,
+                trainer: trainerName,
+                level: schedule.level || "All Levels",
+              };
+            });
+            
+            return {
+              day,
+              schedule: formattedSchedules
+            };
+          });
+          
+          setClasses(groupedSchedules);
+        } else {
+          // Create empty structure if no schedules
+          const emptySchedules = weekdays.map(day => ({
+            day,
+            schedule: []
+          }));
+          setClasses(emptySchedules);
+        }
+        
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching schedules:", err);
+        setError("Failed to load class schedule. Please try again later.");
+        
+        // Create empty structure on error
+        const emptySchedules = weekdays.map(day => ({
+          day,
+          schedule: []
+        }));
+        setClasses(emptySchedules);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchSchedulesAndTrainers();
+  }, []);
+  
+  // Helper function to calculate end time based on start time and duration
+  const calculateEndTime = (startTime, durationMinutes) => {
+    const [hours, minutes] = startTime.split(':').map(Number);
+    let totalMinutes = hours * 60 + minutes + durationMinutes;
+    
+    const endHours = Math.floor(totalMinutes / 60) % 24;
+    const endMinutes = totalMinutes % 60;
+    
+    return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold mb-2">Weekly Schedule</h3>
+          <p className="text-muted-foreground">Loading schedule data...</p>
+        </div>
+        <div className="space-y-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-6 bg-muted rounded w-1/4 mb-2"></div>
+                <div className="h-4 bg-muted rounded w-1/2"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[1, 2, 3].map((j) => (
+                    <div key={j} className="h-16 bg-muted rounded"></div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold mb-2">Weekly Schedule</h3>
+          <p className="text-red-500">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">

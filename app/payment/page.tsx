@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -36,7 +36,8 @@ const fallbackMembershipPlans = {
   },
 }
 
-export default function PaymentPage() {
+// Component that uses useSearchParams
+function PaymentForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { toast } = useToast()
@@ -311,6 +312,15 @@ export default function PaymentPage() {
         </Card>
       </div>
     </div>
-  )
+  );
+}
+
+// Main page component with Suspense
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-12 text-center">Loading payment details...</div>}>
+      <PaymentForm />
+    </Suspense>
+  );
 }
 

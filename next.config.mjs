@@ -26,13 +26,14 @@ const nextConfig = {
       },
     ],
   },
-  // Disable telemetry
-  telemetryDisabled: true,
   // Disable experimental features that may cause issues
   experimental: {
     webpackBuildWorker: false,
   }
 }
+
+// Disable telemetry via env variable
+process.env.NEXT_TELEMETRY_DISABLED = '1';
 
 mergeConfig(nextConfig, userConfig)
 

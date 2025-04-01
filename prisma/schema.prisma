@@ -36,7 +36,7 @@ model MealPlan {
   carbs       Int?
   fat         Int?
   image_url   String?
-  meals       String[] // Array of meal descriptions
+  meals       String   // JSON string of meal descriptions
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 }

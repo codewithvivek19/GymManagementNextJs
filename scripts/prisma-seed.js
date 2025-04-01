@@ -1,255 +1,322 @@
 const { PrismaClient } = require('@prisma/client');
+
 const prisma = new PrismaClient();
 
 async function main() {
   try {
-    console.log('Starting to seed data using Prisma...');
-    
-    // Clear existing data (optional)
+    console.log('Starting to seed database...');
+
+    // Clear existing data
     console.log('Clearing existing data...');
     await prisma.schedule.deleteMany({});
     await prisma.trainer.deleteMany({});
     await prisma.mealPlan.deleteMany({});
     await prisma.membership.deleteMany({});
     
-    // Insert trainers
-    console.log('Inserting trainers data...');
-    const trainersData = [
+    // Add trainers
+    console.log('Adding trainers...');
+    const trainers = [
       {
         name: 'Rahul Sharma',
         email: 'rahul.sharma@example.com',
         specialization: 'Strength Training',
-        experience: 6,
-        bio: 'Former national-level athlete with expertise in strength and conditioning. Specializes in Olympic lifting and functional training.',
-        image_url: 'https://randomuser.me/api/portraits/men/44.jpg'
+        experience: 8,
+        bio: 'Certified strength and conditioning specialist with expertise in powerlifting and bodybuilding. Dedicated to helping clients achieve their strength goals safely and effectively.',
+        image_url: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?q=80&w=500&auto=format&fit=crop',
       },
       {
         name: 'Priya Singh',
         email: 'priya.singh@example.com',
         specialization: 'Yoga & Flexibility',
-        experience: 8,
-        bio: 'Internationally certified yoga instructor with focus on Hatha and Ashtanga yoga. Helps clients improve flexibility and mindfulness.',
-        image_url: 'https://randomuser.me/api/portraits/women/33.jpg'
+        experience: 10,
+        bio: 'Certified yoga instructor with a decade of experience teaching various styles including Hatha, Vinyasa, and Yin. Focused on mindfulness and holistic wellness.',
+        image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=500&auto=format&fit=crop',
       },
       {
         name: 'Vikram Patel',
         email: 'vikram.patel@example.com',
-        specialization: 'HIIT & Functional Training',
-        experience: 5,
-        bio: 'Specializes in high-intensity interval training and functional fitness programs for busy professionals.',
-        image_url: 'https://randomuser.me/api/portraits/men/22.jpg'
-      }
+        specialization: 'Functional Training',
+        experience: 6,
+        bio: 'Specializes in functional movement patterns and HIIT workouts. Passionate about helping clients improve mobility, stability, and everyday performance.',
+        image_url: 'https://images.unsplash.com/photo-1567013127542-490d757e51fc?q=80&w=500&auto=format&fit=crop',
+      },
+      {
+        name: 'Meera Joshi',
+        email: 'meera.joshi@example.com',
+        specialization: 'Nutrition & Weight Management',
+        experience: 7,
+        bio: 'Certified nutritionist and trainer with expertise in sustainable weight management strategies. Creates personalized plans for different dietary needs and goals.',
+        image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=500&auto=format&fit=crop',
+      },
     ];
     
-    const trainers = [];
-    for (const trainer of trainersData) {
+    const createdTrainers = [];
+    
+    for (const trainer of trainers) {
       try {
-        const result = await prisma.trainer.create({
+        const createdTrainer = await prisma.trainer.create({
           data: trainer
         });
-        trainers.push(result);
-        console.log(`Created trainer: ${result.name}`);
-      } catch (error) {
-        console.error('Error inserting trainer:', error);
+        createdTrainers.push(createdTrainer);
+        console.log(`Created trainer: ${trainer.name}`);
+      } catch (err) {
+        console.error(`Error creating trainer ${trainer.name}:`, err);
       }
     }
     
-    // Insert meal plans
-    console.log('\nInserting meal plans data...');
-    const mealPlansData = [
+    // Add meal plans
+    console.log('Adding meal plans...');
+    const mealPlans = [
       {
-        title: 'Indian Weight Loss Meal Plan',
-        description: 'A calorie-deficit meal plan with traditional Indian foods to promote healthy weight loss.',
-        category: 'Weight Loss',
+        title: 'Low Carb Indian Diet',
+        description: 'A low-carbohydrate approach focused on traditional Indian ingredients',
+        category: 'weight_loss',
         calories: 1800,
-        protein: 80,
-        carbs: 150,
-        fat: 60,
-        image_url: 'https://images.unsplash.com/photo-1567337710282-00832b415979?q=80&w=1000',
+        protein: 35,
+        carbs: 25,
+        fat: 40,
+        image_url: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?q=80&w=500&auto=format&fit=crop',
         meals: [
-          'Breakfast: Vegetable upma with sprouts and green tea',
-          'Mid-morning: Buttermilk with roasted chana',
-          'Lunch: 2 rotis with paneer bhurji and cucumber raita',
-          'Evening snack: Fruit chaat with a sprinkle of chaat masala',
-          'Dinner: Grilled fish/tofu curry with brown rice and stir-fried vegetables'
+          { name: 'Breakfast', description: 'Paneer bhurji with mixed vegetables' },
+          { name: 'Snack', description: 'Roasted chana and almonds' },
+          { name: 'Lunch', description: 'Grilled chicken tikka with cucumber raita' },
+          { name: 'Snack', description: 'Coconut and mint chaas' },
+          { name: 'Dinner', description: 'Tandoori fish with palak paneer' }
         ]
       },
       {
-        title: 'Indian Muscle Gain Plan',
-        description: 'High-protein Indian meal plan designed for muscle building and recovery.',
-        category: 'Muscle Gain',
-        calories: 3000,
-        protein: 150,
-        carbs: 300,
-        fat: 100,
-        image_url: 'https://images.unsplash.com/photo-1542556398-95fb5b9c1c99?q=80&w=1000',
+        title: 'Balanced Vegetarian Plan',
+        description: 'Nutritionally complete vegetarian diet with adequate protein',
+        category: 'vegetarian',
+        calories: 2000,
+        protein: 25,
+        carbs: 50,
+        fat: 25,
+        image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500&auto=format&fit=crop',
         meals: [
-          'Breakfast: Paneer paratha with curd and protein shake',
-          'Mid-morning: Egg bhurji with whole grain toast',
-          'Lunch: Chicken/chickpea curry with jeera rice and vegetable salad',
-          'Post-workout: Banana lassi with whey protein',
-          'Dinner: Tandoori chicken/soya chunks with dal and mixed vegetable sabzi',
-          'Before bed: Greek yogurt with almonds'
+          { name: 'Breakfast', description: 'Besan chilla with paneer stuffing and mint chutney' },
+          { name: 'Snack', description: 'Greek yogurt with mixed berries and honey' },
+          { name: 'Lunch', description: 'Rajma chawal with mixed vegetable salad' },
+          { name: 'Snack', description: 'Sprouts bhel with lemon and chaat masala' },
+          { name: 'Dinner', description: 'Tofu and vegetable tikka masala with multigrain roti' }
         ]
       },
       {
-        title: 'Vegetarian Indian Diet',
-        description: 'Plant-based Indian diet rich in protein and essential nutrients.',
-        category: 'Vegetarian',
-        calories: 2200,
-        protein: 90,
-        carbs: 250,
-        fat: 75,
-        image_url: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=1000',
+        title: 'High Protein Muscle Gain',
+        description: 'Calorie surplus diet for serious muscle building',
+        category: 'muscle_gain',
+        calories: 3100,
+        protein: 40,
+        carbs: 40,
+        fat: 20,
+        image_url: 'https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=500&auto=format&fit=crop',
         meals: [
-          'Breakfast: Moong dal cheela with mint chutney',
-          'Mid-morning: Sprouts sundal',
-          'Lunch: Rajma curry with brown rice and beet raita',
-          'Evening snack: Multigrain dhokla with green chutney',
-          'Dinner: Palak paneer with missi roti and cucumber salad'
+          { name: 'Breakfast', description: 'Masala oats with eggs and mixed nuts' },
+          { name: 'Snack', description: 'Protein shake with banana and peanut butter' },
+          { name: 'Lunch', description: 'Chicken biryani with raita and salad' },
+          { name: 'Snack', description: 'Paneer tikka with mint chutney' },
+          { name: 'Dinner', description: 'Lamb curry with brown rice and vegetables' }
         ]
-      }
+      },
+      {
+        title: 'Balanced Maintenance',
+        description: 'Well-rounded nutrition plan for maintaining current physique',
+        category: 'maintenance',
+        calories: 2400,
+        protein: 30,
+        carbs: 45,
+        fat: 25,
+        image_url: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=500&auto=format&fit=crop',
+        meals: [
+          { name: 'Breakfast', description: 'Vegetable uttapam with coconut chutney' },
+          { name: 'Snack', description: 'Apple with nut butter' },
+          { name: 'Lunch', description: 'Roti with mixed vegetable sabzi and dal' },
+          { name: 'Snack', description: 'Yogurt with honey and fruits' },
+          { name: 'Dinner', description: 'Grilled fish with quinoa pulao and salad' }
+        ]
+      },
     ];
     
-    for (const mealPlan of mealPlansData) {
+    for (const plan of mealPlans) {
       try {
-        const result = await prisma.mealPlan.create({
-          data: mealPlan
+        const mealArray = JSON.stringify(plan.meals);
+        
+        const { meals, ...planData } = plan;
+        
+        await prisma.mealPlan.create({
+          data: {
+            ...planData,
+            meals: mealArray
+          }
         });
-        console.log(`Created meal plan: ${result.title}`);
-      } catch (error) {
-        console.error('Error inserting meal plan:', error);
+        console.log(`Created meal plan: ${plan.title}`);
+      } catch (err) {
+        console.error(`Error creating meal plan ${plan.title}:`, err);
       }
     }
     
-    // Insert memberships
-    console.log('\nInserting memberships data...');
-    const membershipsData = [
+    // Add memberships
+    console.log('Adding memberships...');
+    const memberships = [
       {
-        name: 'Basic Plan',
-        description: 'Affordable fitness option with essential gym facilities.',
+        name: 'Basic',
+        description: 'Access to gym facilities during regular hours',
         price: 1999,
-        duration: '1 Month',
-        features: [
-          'Access to gym equipment during non-peak hours',
-          'Locker room access',
-          'One fitness assessment'
-        ],
+        duration: '1 month',
+        features: ['Gym access', 'Locker use', 'Free water'],
         is_popular: false
       },
       {
-        name: 'Gold Plan',
-        description: 'Our most popular plan with a balance of amenities and value.',
+        name: 'Standard',
+        description: 'Full access including classes and extended hours',
         price: 3499,
-        duration: '3 Months',
-        features: [
-          'Full 24/7 gym access',
-          '2 personal training sessions per month',
-          'Access to group classes',
-          'Fitness tracking app access',
-          'Nutritional guidance'
-        ],
+        duration: '1 month',
+        features: ['Gym access', 'Locker use', 'Free water', 'Group classes', 'Extended hours'],
         is_popular: true
       },
       {
-        name: 'Premium Plan',
-        description: 'Luxury fitness experience with top-tier amenities and services.',
+        name: 'Premium',
+        description: 'Complete access with additional premium benefits',
         price: 5999,
-        duration: '6 Months',
+        duration: '1 month',
         features: [
-          'Premium 24/7 gym access',
-          '4 personal training sessions per month',
-          'Unlimited group classes',
-          'Swimming pool access',
-          'Sauna and steam room',
-          'Personalized nutrition plan',
-          'Quarterly body composition analysis'
+          'Gym access',
+          'Locker use',
+          'Free water',
+          'Group classes',
+          'Extended hours',
+          '1 personal training session',
+          'Nutrition guidance',
+          'Spa access'
+        ],
+        is_popular: false
+      },
+      {
+        name: 'Annual Standard',
+        description: 'Standard membership with annual discount',
+        price: 32999,
+        duration: '12 months',
+        features: [
+          'Gym access',
+          'Locker use',
+          'Free water',
+          'Group classes',
+          'Extended hours',
+          'Free guest passes',
+          '10% off on merchandise'
         ],
         is_popular: false
       }
     ];
     
-    for (const membership of membershipsData) {
+    for (const membership of memberships) {
       try {
-        const result = await prisma.membership.create({
+        await prisma.membership.create({
           data: membership
         });
-        console.log(`Created membership: ${result.name}`);
-      } catch (error) {
-        console.error('Error inserting membership:', error);
+        console.log(`Created membership: ${membership.name}`);
+      } catch (err) {
+        console.error(`Error creating membership ${membership.name}:`, err);
       }
     }
     
-    // Insert schedules
-    console.log('\nInserting schedules data...');
-    const schedulesData = [
+    // Add schedules
+    console.log('Adding schedules...');
+    // Use the first trainer for the schedules
+    const schedules = [
       {
-        name: 'Morning Yoga',
-        description: 'Start your day with energizing yoga poses and meditation.',
+        name: 'Morning HIIT',
+        description: 'High-intensity interval training to kickstart your day',
         day: 'Monday',
-        time: '7:00 AM',
+        time: '06:00',
         duration: 60,
-        location: 'Studio 1',
-        trainer_id: trainers.length > 1 ? trainers[1].id : undefined,
-        max_participants: 15
+        location: 'Studio A',
+        max_participants: 20,
+        trainer_id: createdTrainers[0].id,
       },
       {
-        name: 'Bollywood Dance Fitness',
-        description: 'High-energy dance workout with popular Bollywood songs.',
+        name: 'Yoga Flow',
+        description: 'Fluid yoga movements for flexibility and relaxation',
+        day: 'Monday',
+        time: '09:00',
+        duration: 60,
+        location: 'Studio B',
+        max_participants: 15,
+        trainer_id: createdTrainers[1].id,
+      },
+      {
+        name: 'Functional Training',
+        description: 'Improve everyday movement patterns and strength',
         day: 'Tuesday',
-        time: '6:00 PM',
-        duration: 45,
-        location: 'Studio 2',
-        max_participants: 20
-      },
-      {
-        name: 'HIIT Circuit',
-        description: 'High-intensity interval training to burn calories and build strength.',
-        day: 'Wednesday',
-        time: '5:30 PM',
-        duration: 45,
-        location: 'Functional Zone',
-        trainer_id: trainers.length > 2 ? trainers[2].id : undefined,
-        max_participants: 12
-      },
-      {
-        name: 'Power Lifting',
-        description: 'Focused session on improving strength through compound lifts.',
-        day: 'Thursday',
-        time: '6:30 PM',
+        time: '06:00',
         duration: 60,
-        location: 'Weight Area',
-        trainer_id: trainers.length > 0 ? trainers[0].id : undefined,
-        max_participants: 8
+        location: 'Studio A',
+        max_participants: 20,
+        trainer_id: createdTrainers[2].id,
       },
       {
-        name: 'Weekend Warrior',
-        description: 'Full-body workout to kickstart your weekend.',
-        day: 'Saturday',
-        time: '10:00 AM',
-        duration: 75,
-        location: 'Main Gym Floor',
-        max_participants: 15
-      }
+        name: 'Pilates',
+        description: 'Core strength and flexibility training',
+        day: 'Tuesday',
+        time: '09:00',
+        duration: 60,
+        location: 'Studio B',
+        max_participants: 15,
+        trainer_id: createdTrainers[1].id,
+      },
+      {
+        name: 'Morning HIIT',
+        description: 'High-intensity interval training to kickstart your day',
+        day: 'Wednesday',
+        time: '06:00',
+        duration: 60,
+        location: 'Studio A',
+        max_participants: 20,
+        trainer_id: createdTrainers[0].id,
+      },
+      {
+        name: 'Strength Circuit',
+        description: 'Circuit training focused on building strength',
+        day: 'Wednesday',
+        time: '12:00',
+        duration: 60,
+        location: 'Main Floor',
+        max_participants: 12,
+        trainer_id: createdTrainers[0].id,
+      },
+      {
+        name: 'Nutrition Workshop',
+        description: 'Learn about proper nutrition for your fitness goals',
+        day: 'Thursday',
+        time: '18:00',
+        duration: 90,
+        location: 'Conference Room',
+        max_participants: 25,
+        trainer_id: createdTrainers[3].id,
+      },
     ];
     
-    for (const schedule of schedulesData) {
+    for (const schedule of schedules) {
       try {
-        const result = await prisma.schedule.create({
+        await prisma.schedule.create({
           data: schedule
         });
-        console.log(`Created schedule: ${result.name} (${result.day})`);
-      } catch (error) {
-        console.error('Error inserting schedule:', error);
+        console.log(`Created schedule: ${schedule.name} on ${schedule.day}`);
+      } catch (err) {
+        console.error(`Error creating schedule ${schedule.name} on ${schedule.day}:`, err);
       }
     }
     
-    console.log('\nAll data seeding completed successfully!');
+    console.log('Seeding completed successfully.');
   } catch (error) {
-    console.error('Error in main seed function:', error);
+    console.error('Error during seeding:', error);
   } finally {
     await prisma.$disconnect();
   }
 }
 
-main(); 
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  }); 
