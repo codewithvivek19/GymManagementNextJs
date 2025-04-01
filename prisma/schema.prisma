@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Trainer {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  specialization  String?
+  experience      Int?
+  bio             String?
+  image_url       String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  // Relations
+  schedules       Schedule[]
+}
+
+model MealPlan {
+  id          String   @id @default(cuid())
+  title       String   @unique
+  description String?
+  category    String
+  calories    Int?
+  protein     Int?
+  carbs       Int?
+  fat         Int?
+  image_url   String?
+  meals       String[] // Array of meal descriptions
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Membership {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  price       Int
+  duration    String
+  features    String[]
+  is_popular  Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Schedule {
+  id               String   @id @default(cuid())
+  name             String
+  description      String?
+  day              String
+  time             String
+  duration         Int
+  location         String?
+  max_participants Int?
+  trainer_id       String?
+  trainer          Trainer? @relation(fields: [trainer_id], references: [id])
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@unique([name, day])
+}
+
