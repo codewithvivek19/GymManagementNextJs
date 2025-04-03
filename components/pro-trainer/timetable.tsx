@@ -4,17 +4,40 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { getSchedules, getTrainers } from "@/lib/supabase"
+import { CalendarClock, Clock, Users } from "lucide-react"
 
 const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 const gymHours = {
-  Monday: "05:00 - 23:00",
-  Tuesday: "05:00 - 23:00",
-  Wednesday: "05:00 - 23:00",
-  Thursday: "05:00 - 23:00",
-  Friday: "05:00 - 23:00",
-  Saturday: "07:00 - 21:00",
-  Sunday: "Closed",
+  Monday: "06:00 - 22:00",
+  Tuesday: "06:00 - 22:00",
+  Wednesday: "06:00 - 22:00",
+  Thursday: "06:00 - 22:00",
+  Friday: "06:00 - 22:00",
+  Saturday: "07:00 - 20:00",
+  Sunday: "08:00 - 18:00",
+}
+
+// Define class categories with colors
+const classCategories = {
+  "Yoga": { color: "bg-green-100 border-green-300 text-green-800" },
+  "Pilates": { color: "bg-blue-100 border-blue-300 text-blue-800" },
+  "HIIT": { color: "bg-red-100 border-red-300 text-red-800" },
+  "Spin": { color: "bg-yellow-100 border-yellow-300 text-yellow-800" },
+  "Zumba": { color: "bg-purple-100 border-purple-300 text-purple-800" },
+  "Boxing": { color: "bg-orange-100 border-orange-300 text-orange-800" },
+  "Strength": { color: "bg-gray-100 border-gray-300 text-gray-800" },
+  "Cardio": { color: "bg-pink-100 border-pink-300 text-pink-800" },
+}
+
+// Helper function to determine class color
+const getClassColor = (className) => {
+  for (const [category, styles] of Object.entries(classCategories)) {
+    if (className.includes(category)) {
+      return styles.color;
+    }
+  }
+  return "bg-slate-100 border-slate-300 text-slate-800"; // Default
 }
 
 export default function Timetable() {
@@ -88,7 +111,15 @@ export default function Timetable() {
                 name: schedule.name,
                 trainer: trainerName,
                 level: schedule.level || "All Levels",
+                duration: schedule.duration || 60,
               };
+            });
+            
+            // Sort schedules by time
+            formattedSchedules.sort((a, b) => {
+              const timeA = a.time.split(' - ')[0];
+              const timeB = b.time.split(' - ')[0];
+              return timeA.localeCompare(timeB);
             });
             
             return {
@@ -184,16 +215,19 @@ export default function Timetable() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Gym Hours</CardTitle>
+        <CardHeader className="bg-slate-50 border-b">
+          <div className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-primary" />
+            <CardTitle>Gym Hours</CardTitle>
+          </div>
           <CardDescription>Our facility operating hours</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
             {Object.entries(gymHours).map(([day, hours]) => (
-              <div key={day} className="p-3 bg-muted rounded-lg text-center">
-                <div className="font-medium">{day}</div>
-                <div className={`text-sm ${hours === "Closed" ? "text-red-500" : "text-muted-foreground"}`}>
+              <div key={day} className="p-3 bg-slate-50 rounded-lg text-center border shadow-sm">
+                <div className="font-medium mb-1">{day}</div>
+                <div className={`text-sm ${day === "Sunday" ? "text-amber-600 font-medium" : "text-muted-foreground"}`}>
                   {hours}
                 </div>
               </div>
@@ -204,30 +238,44 @@ export default function Timetable() {
 
       <div className="space-y-6">
         {classes.map((daySchedule) => (
-          <Card key={daySchedule.day}>
-            <CardHeader>
-              <CardTitle>{daySchedule.day}</CardTitle>
+          <Card key={daySchedule.day} className="overflow-hidden">
+            <CardHeader className={`bg-slate-50 border-b ${daySchedule.day === 'Sunday' ? 'bg-amber-50' : ''}`}>
+              <div className="flex items-center gap-2">
+                <CalendarClock className="h-5 w-5 text-primary" />
+                <CardTitle>{daySchedule.day}</CardTitle>
+              </div>
               {daySchedule.day === "Sunday" ? (
-                <CardDescription>Gym closed on Sundays</CardDescription>
+                <CardDescription>Limited classes on Sunday</CardDescription>
               ) : (
                 <CardDescription>Class schedule for {daySchedule.day}</CardDescription>
               )}
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               {daySchedule.schedule.length > 0 ? (
                 <div className="space-y-4">
                   {daySchedule.schedule.map((classItem, index) => (
                     <div
                       key={index}
-                      className="flex flex-col md:flex-row md:items-center justify-between p-3 bg-muted rounded-lg"
+                      className={`flex flex-col md:flex-row md:items-center justify-between p-4 rounded-lg border ${getClassColor(classItem.name)}`}
                     >
-                      <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                        <div className="font-medium min-w-[140px]">{classItem.time}</div>
-                        <div className="font-bold">{classItem.name}</div>
+                      <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+                        <div className="font-medium text-gray-700 bg-white px-3 py-1 rounded-full border shadow-sm flex items-center">
+                          <Clock className="h-4 w-4 mr-1.5 text-primary" />
+                          {classItem.time}
+                        </div>
+                        <div className="font-bold text-lg">{classItem.name}</div>
                       </div>
-                      <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 mt-2 md:mt-0">
-                        <div className="text-sm text-muted-foreground">Instructor: {classItem.trainer}</div>
-                        <Badge variant="outline">{classItem.level}</Badge>
+                      <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6 mt-3 md:mt-0">
+                        <div className="flex items-center text-sm text-gray-700">
+                          <Users className="h-4 w-4 mr-1.5 text-primary" />
+                          {classItem.trainer}
+                        </div>
+                        <Badge variant="secondary" className="shadow-sm">
+                          {classItem.level}
+                        </Badge>
+                        <Badge variant="outline" className="shadow-sm">
+                          {classItem.duration} min
+                        </Badge>
                       </div>
                     </div>
                   ))}
@@ -243,77 +291,17 @@ export default function Timetable() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Class Information</CardTitle>
+        <CardHeader className="bg-slate-50 border-b">
+          <CardTitle>Class Categories</CardTitle>
+          <CardDescription>Learn about our different class types</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-medium mb-2">Class Levels</h4>
-              <ul className="space-y-2">
-                <li className="flex items-start">
-                  <span className="mr-2 text-primary">•</span>
-                  <div>
-                    <span className="font-medium">Beginner:</span>{" "}
-                    <span className="text-muted-foreground">
-                      Suitable for those new to fitness or the specific exercise type. Focuses on proper form and
-                      technique.
-                    </span>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-primary">•</span>
-                  <div>
-                    <span className="font-medium">Intermediate:</span>{" "}
-                    <span className="text-muted-foreground">
-                      For those with some experience. Increases intensity and introduces more complex movements.
-                    </span>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-primary">•</span>
-                  <div>
-                    <span className="font-medium">Advanced:</span>{" "}
-                    <span className="text-muted-foreground">
-                      Challenging classes for experienced individuals. High intensity with complex movements.
-                    </span>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-primary">•</span>
-                  <div>
-                    <span className="font-medium">All Levels:</span>{" "}
-                    <span className="text-muted-foreground">
-                      Suitable for everyone with modifications provided for different fitness levels.
-                    </span>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-medium mb-2">Class Policies</h4>
-              <ul className="space-y-2">
-                <li className="flex items-start">
-                  <span className="mr-2 text-primary">•</span>
-                  <span className="text-muted-foreground">Please arrive 5-10 minutes before class starts</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-primary">•</span>
-                  <span className="text-muted-foreground">Reservations can be made up to 24 hours in advance</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-primary">•</span>
-                  <span className="text-muted-foreground">
-                    Please cancel at least 2 hours before class if you cannot attend
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-primary">•</span>
-                  <span className="text-muted-foreground">Bring a water bottle and towel to all classes</span>
-                </li>
-              </ul>
-            </div>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {Object.entries(classCategories).map(([category, { color }]) => (
+              <div key={category} className={`p-3 rounded-lg border ${color}`}>
+                <div className="font-medium">{category}</div>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>

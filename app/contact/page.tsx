@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Mail, Phone, MapPin, Clock, Instagram, Facebook, Twitter } from "lucide-react"
+import Image from "next/image"
 
 export default function ContactPage() {
   const { toast } = useToast()
@@ -120,7 +121,7 @@ export default function ContactPage() {
                 <MapPin className="h-5 w-5 text-primary mr-3 mt-0.5" />
                 <div>
                   <h3 className="font-medium">Location</h3>
-                  <p className="text-muted-foreground">123 Fitness Avenue, Workout City, WC 12345</p>
+                  <p className="text-muted-foreground">123 Fitness Street, Mumbai, Maharashtra 400001</p>
                 </div>
               </div>
 
@@ -128,7 +129,7 @@ export default function ContactPage() {
                 <Mail className="h-5 w-5 text-primary mr-3 mt-0.5" />
                 <div>
                   <h3 className="font-medium">Email</h3>
-                  <p className="text-muted-foreground">info@fitzone.com</p>
+                  <p className="text-muted-foreground">info@fitnesshub.com</p>
                 </div>
               </div>
 
@@ -136,7 +137,7 @@ export default function ContactPage() {
                 <Phone className="h-5 w-5 text-primary mr-3 mt-0.5" />
                 <div>
                   <h3 className="font-medium">Phone</h3>
-                  <p className="text-muted-foreground">+1 (555) 123-4567</p>
+                  <p className="text-muted-foreground">+91 98765 43210</p>
                 </div>
               </div>
 
@@ -145,9 +146,9 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-medium">Hours</h3>
                   <div className="text-muted-foreground">
-                    <p>Monday - Friday: 5:00 AM - 11:00 PM</p>
-                    <p>Saturday: 7:00 AM - 9:00 PM</p>
-                    <p>Sunday: Closed</p>
+                    <p>Monday - Friday: 6:00 AM - 10:00 PM</p>
+                    <p>Saturday: 7:00 AM - 8:00 PM</p>
+                    <p>Sunday: 8:00 AM - 6:00 PM</p>
                   </div>
                 </div>
               </div>
@@ -158,27 +159,40 @@ export default function ContactPage() {
             <h2 className="text-2xl font-bold mb-6">Follow Us</h2>
             <div className="flex space-x-4">
               <Button variant="outline" size="icon" asChild>
-                <a href="#" aria-label="Facebook">
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                   <Facebook className="h-5 w-5" />
                 </a>
               </Button>
               <Button variant="outline" size="icon" asChild>
-                <a href="#" aria-label="Instagram">
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                   <Instagram className="h-5 w-5" />
                 </a>
               </Button>
               <Button variant="outline" size="icon" asChild>
-                <a href="#" aria-label="Twitter">
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
                   <Twitter className="h-5 w-5" />
                 </a>
               </Button>
             </div>
           </div>
 
-          <div className="h-64 bg-muted rounded-lg">
-            {/* Map placeholder - would be replaced with an actual map component */}
-            <div className="h-full flex items-center justify-center">
-              <p className="text-muted-foreground">Interactive Map</p>
+          <div className="rounded-lg overflow-hidden h-72 relative">
+            <Image 
+              src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3" 
+              alt="Map of our location" 
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+              <Button asChild>
+                <a 
+                  href="https://maps.google.com/?q=Mumbai" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  View on Google Maps
+                </a>
+              </Button>
             </div>
           </div>
         </div>

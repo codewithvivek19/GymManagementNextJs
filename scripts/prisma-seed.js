@@ -22,7 +22,7 @@ async function main() {
         specialization: 'Strength Training',
         experience: 8,
         bio: 'Certified strength and conditioning specialist with expertise in powerlifting and bodybuilding. Dedicated to helping clients achieve their strength goals safely and effectively.',
-        image_url: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?q=80&w=500&auto=format&fit=crop',
+        image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3',
       },
       {
         name: 'Priya Singh',
@@ -30,7 +30,7 @@ async function main() {
         specialization: 'Yoga & Flexibility',
         experience: 10,
         bio: 'Certified yoga instructor with a decade of experience teaching various styles including Hatha, Vinyasa, and Yin. Focused on mindfulness and holistic wellness.',
-        image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=500&auto=format&fit=crop',
+        image_url: 'https://images.unsplash.com/photo-1581734984638-da67bf47f79d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3',
       },
       {
         name: 'Vikram Patel',
@@ -38,7 +38,7 @@ async function main() {
         specialization: 'Functional Training',
         experience: 6,
         bio: 'Specializes in functional movement patterns and HIIT workouts. Passionate about helping clients improve mobility, stability, and everyday performance.',
-        image_url: 'https://images.unsplash.com/photo-1567013127542-490d757e51fc?q=80&w=500&auto=format&fit=crop',
+        image_url: 'https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3',
       },
       {
         name: 'Meera Joshi',
@@ -46,7 +46,7 @@ async function main() {
         specialization: 'Nutrition & Weight Management',
         experience: 7,
         bio: 'Certified nutritionist and trainer with expertise in sustainable weight management strategies. Creates personalized plans for different dietary needs and goals.',
-        image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=500&auto=format&fit=crop',
+        image_url: 'https://images.unsplash.com/photo-1535324492437-d8dea70a38a7?q=80&w=1936&auto=format&fit=crop&ixlib=rb-4.0.3',
       },
     ];
     
@@ -75,7 +75,7 @@ async function main() {
         protein: 35,
         carbs: 25,
         fat: 40,
-        image_url: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?q=80&w=500&auto=format&fit=crop',
+        image_url: 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3',
         meals: [
           { name: 'Breakfast', description: 'Paneer bhurji with mixed vegetables' },
           { name: 'Snack', description: 'Roasted chana and almonds' },
@@ -92,7 +92,7 @@ async function main() {
         protein: 25,
         carbs: 50,
         fat: 25,
-        image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500&auto=format&fit=crop',
+        image_url: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3',
         meals: [
           { name: 'Breakfast', description: 'Besan chilla with paneer stuffing and mint chutney' },
           { name: 'Snack', description: 'Greek yogurt with mixed berries and honey' },
@@ -109,7 +109,7 @@ async function main() {
         protein: 40,
         carbs: 40,
         fat: 20,
-        image_url: 'https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=500&auto=format&fit=crop',
+        image_url: 'https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?q=80&w=2064&auto=format&fit=crop&ixlib=rb-4.0.3',
         meals: [
           { name: 'Breakfast', description: 'Masala oats with eggs and mixed nuts' },
           { name: 'Snack', description: 'Protein shake with banana and peanut butter' },
@@ -126,7 +126,7 @@ async function main() {
         protein: 30,
         carbs: 45,
         fat: 25,
-        image_url: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=500&auto=format&fit=crop',
+        image_url: 'https://images.unsplash.com/photo-1620708176789-ce543fd6c78a?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3',
         meals: [
           { name: 'Breakfast', description: 'Vegetable uttapam with coconut chutney' },
           { name: 'Snack', description: 'Apple with nut butter' },

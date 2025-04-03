@@ -1,66 +1,70 @@
+"use client"
+
+import { Card, CardContent } from "@/components/ui/card"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import Image from "next/image"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Quote } from "lucide-react"
 
 const testimonials = [
   {
-    quote:
-      "FitZone completely transformed my approach to fitness. The trainers are knowledgeable and supportive, and the facilities are top-notch.",
-    author: "Sarah Johnson",
-    role: "Member since 2020",
-    image: "/placeholder.svg?height=200&width=200",
+    name: "Arjun Mehta",
+    text: "I've tried many gyms before, but none compare to the personalized attention and results I've achieved here. The trainers are knowledgeable and the community is so supportive!",
+    role: "Software Engineer",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
   },
   {
-    quote:
-      "I've tried many gyms over the years, but FitZone stands out for its community feel and personalized approach to fitness.",
-    author: "Michael Chen",
-    role: "Member since 2019",
-    image: "/placeholder.svg?height=200&width=200",
+    name: "Kavita Patel",
+    text: "The nutrition coaching combined with the training program has completely transformed my health. I've lost 15kg and gained so much confidence in the process!",
+    role: "Marketing Executive",
+    image: "https://images.unsplash.com/photo-1621784563330-caee0b138a00?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
   },
   {
-    quote:
-      "The nutrition counseling combined with personal training has helped me lose 30 pounds and keep it off. I'm in the best shape of my life!",
-    author: "Emily Rodriguez",
-    role: "Member since 2021",
-    image: "/placeholder.svg?height=200&width=200",
+    name: "Rajiv Kumar",
+    text: "As a senior, I was hesitant to join a gym, but the staff made me feel welcome and designed a program specifically for my needs. My mobility has improved tremendously!",
+    role: "Retired Professor",
+    image: "https://images.unsplash.com/photo-1504257432389-52343af06ae3?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
   },
 ]
 
 export default function Testimonials() {
   return (
     <section className="bg-muted py-16">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">What Our Members Say</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Don't just take our word for it. Hear from our members who have transformed their lives with FitZone.
+      <div className="container space-y-8">
+        <div className="text-center space-y-2">
+          <h2 className="text-3xl font-bold tracking-tight">What Our Members Say</h2>
+          <p className="text-muted-foreground">
+            Hear from our satisfied members about their fitness journeys and the results they've achieved.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <Card key={index} className="bg-background">
-              <CardContent className="pt-6">
-                <Quote className="h-8 w-8 text-primary mb-4" />
-                <p className="text-muted-foreground mb-6">"{testimonial.quote}"</p>
-              </CardContent>
-              <CardFooter className="flex items-center space-x-4">
-                <div className="relative h-12 w-12 rounded-full overflow-hidden">
-                  <Image
-                    src={testimonial.image || "/placeholder.svg"}
-                    alt={testimonial.author}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="font-medium">{testimonial.author}</h4>
-                  <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                </div>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        <Carousel className="w-full max-w-4xl mx-auto">
+          <CarouselContent>
+            {testimonials.map((testimonial) => (
+              <CarouselItem key={testimonial.name}>
+                <Card>
+                  <CardContent className="flex flex-col md:flex-row items-center gap-6 p-6">
+                    <div className="relative h-24 w-24 rounded-full overflow-hidden shrink-0">
+                      <Image
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="space-y-2 text-center md:text-left">
+                      <blockquote className="text-lg italic">"{testimonial.text}"</blockquote>
+                      <div>
+                        <p className="font-semibold">{testimonial.name}</p>
+                        <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
     </section>
   )

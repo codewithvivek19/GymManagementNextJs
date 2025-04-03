@@ -9,13 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
 import { PlusCircle, Trash2, BarChart3, Calendar, ClipboardList } from "lucide-react"
+import Image from "next/image"
 
-// Sample exercise data
+// Exercise categories with images
 const exerciseCategories = [
-  { value: "strength", label: "Strength Training" },
-  { value: "cardio", label: "Cardio" },
-  { value: "flexibility", label: "Flexibility" },
-  { value: "balance", label: "Balance & Stability" },
+  { value: "strength", label: "Strength Training", image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3" },
+  { value: "cardio", label: "Cardio", image: "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3" },
+  { value: "flexibility", label: "Flexibility", image: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3" },
+  { value: "balance", label: "Balance & Stability", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3" },
 ]
 
 const exerciseOptions = {
@@ -205,6 +206,28 @@ export default function ExerciseTracker() {
         <p className="text-muted-foreground">
           Log your workouts, track your progress, and get recommendations for complementary exercises.
         </p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {exerciseCategories.map((category) => (
+          <Card 
+            key={category.value} 
+            className={`cursor-pointer transition-all ${selectedCategory === category.value ? 'ring-2 ring-primary' : ''}`}
+            onClick={() => handleCategoryChange(category.value)}
+          >
+            <div className="relative h-36 w-full overflow-hidden rounded-t-lg">
+              <Image 
+                src={category.image} 
+                alt={category.label} 
+                fill 
+                className="object-cover"
+              />
+            </div>
+            <CardHeader className="p-3 text-center">
+              <CardTitle className="text-sm font-medium">{category.label}</CardTitle>
+            </CardHeader>
+          </Card>
+        ))}
       </div>
 
       <Tabs defaultValue="log">
